@@ -19,8 +19,12 @@ export async function createApp(projectName: string, framework: string) {
 
   // copy template folder
   // const templateDir = path.resolve(__dirname, `../../templates/${framework}-ts`);
-  const templateDir = path.resolve(__dirname, `../templates/${framework}-ts`);
+  // const templateDir = path.resolve(__dirname, `../templates/${framework}-ts`);
+  // fs.cpSync(templateDir, targetDir, { recursive: true });
+
+  const templateDir = path.resolve(__dirname, `../../src/templates/${framework}-ts`);
   fs.cpSync(templateDir, targetDir, { recursive: true });
+
 
   spinner.succeed(`Project ${projectName} created!`);
 
