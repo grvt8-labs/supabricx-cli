@@ -24,6 +24,7 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
+    "emitDeclarationOnly": false,
 
     // JSX (if frontend present)
     "jsx": "react-jsx",
