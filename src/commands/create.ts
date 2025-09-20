@@ -7,6 +7,7 @@ import chalk from "chalk";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 const envFile = `
 # Environment Variables
 
@@ -29,6 +30,31 @@ GITHUB_CLIENT_SECRET="your-github-client-secret"
 GITHUB_CALLBACK_URL="http://localhost:3000/auth/github/callback"
 `;
 
+const gitignoreFile = `
+# Node
+node_modules
+dist
+
+# Env
+.env
+.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDEs
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+`;
+
+
 export async function createApp(projectName: string, framework: string) {
   const spinner = ora(`Creating ${framework} project...`).start();
 
@@ -47,7 +73,8 @@ export async function createApp(projectName: string, framework: string) {
   fs.cpSync(templateDir, targetDir, { recursive: true });
 
   fs.writeFileSync(path.join(targetDir, ".env"), envFile.trim());
-
+  fs.writeFileSync(path.join(targetDir, ".gitignore"), gitignoreFile.trim());
+  
   spinner.succeed(`Project ${projectName} created!`);
 
   // Install dependencies

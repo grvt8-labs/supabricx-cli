@@ -1,4 +1,4 @@
-import { db } from "@/configs/db";
+import { db } from "../../configs/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { IAuthService } from "../auth.service.js";
@@ -8,7 +8,7 @@ export class AuthServiceImpl implements IAuthService {
   async register(email: string, password: string, role: string = "USER"): Promise<User> {
     const hashed = await bcrypt.hash(password, 10);
     return db.user.create({
-      data: { email, password: hashed, role, provider: "jwt" },
+      data: { email, password: hashed, role: role as any, provider: "jwt" },
     });
   }
 
