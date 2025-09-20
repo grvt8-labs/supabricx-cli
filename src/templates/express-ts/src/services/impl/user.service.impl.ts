@@ -1,10 +1,10 @@
-import { db } from "../../config/db.js";
+import { db } from "../../configs/db";
 import { CreateUserDto } from "../../dtos/user.dto.js";
-import { IUserService } from "../user.service.js";
+import { UserService } from "../user.services";
 import { User } from "@prisma/client";
 import { hashPassword } from "../../utils/password.utils";
 
-export class UserServiceImpl implements IUserService {
+export class UserServiceImpl implements UserService {
   async getAllUsers(): Promise<User[]> {
     return db.user.findMany();
   }

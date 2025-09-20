@@ -1,19 +1,24 @@
 {
-  "name": "supabricx",
+  "name": "create-supabricx",
   "version": "1.0.0",
+  "description": "Supabricx backend accelerator CLI",
   "main": "index.js",
-  "type": "module",   
+  "type": "module",
   "bin": {
-    "supabricx": "./bin/supabricx.js"
+    "create-supabricx": "./bin/supabricx.js"
   },
+  "files": [
+    "dist",
+    "bin",
+    "src/templates"
+  ],
   "scripts": {
     "dev": "ts-node src/index.ts",
     "build": "tsc"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "author": "404khai",
+  "license": "MIT",
+  "keywords": ["cli", "backend", "express", "nest", "springboot", "scaffold"],
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
     "@types/express": "^5.0.3",
@@ -33,6 +38,7 @@
     "execa": "^9.6.0",
     "express": "^5.1.0",
     "fs-extra": "^11.3.2",
+    "inquirer": "^12.9.6",
     "jsonwebtoken": "^9.0.2",
     "ora": "^9.0.0",
     "passport": "^0.7.0",

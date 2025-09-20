@@ -4,9 +4,11 @@ import { fileURLToPath } from "url";
 import { execa } from "execa";
 import ora from "ora";
 import chalk from "chalk";
+import inquirer from "inquirer";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 const envFile = `
 # Environment Variables
 
@@ -29,28 +31,79 @@ GITHUB_CLIENT_SECRET="your-github-client-secret"
 GITHUB_CALLBACK_URL="http://localhost:3000/auth/github/callback"
 `;
 
-export async function createApp(projectName: string, framework: string) {
-  const spinner = ora(`Creating ${framework} project...`).start();
+const gitignoreFile = `
+# Node
+node_modules
+dist
 
-  const targetDir = path.resolve(process.cwd(), projectName);
+# Env
+.env
+.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDEs
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+`;
+
+export async function createApp(projectName?: string, frameworkArg?: string) {
+  // 1️⃣ Prompt for project name if not provided
+  if (!projectName) {
+    const answers = await inquirer.prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "What is your project called?",
+        default: "my-app",
+      },
+    ]);
+    projectName = answers.name;
+  }
+
+  // 2️⃣ Prompt for framework if not provided
+  let framework = frameworkArg;
+  if (!framework) {
+    const answers = await inquirer.prompt([
+      {
+        type: "list",
+        name: "framework",
+        message: "Choose a framework:",
+        choices: ["Express", "NestJs (Coming Soon)", "SpringBoot (Coming Soon)"],
+        default: "express",
+      },
+    ]);
+    framework = answers.framework;
+  }
+
+  // 3️⃣ Start spinner
+  const spinner = ora(`Creating ${framework} project...`).start();
+  const targetDir = path.resolve(process.cwd(), projectName as string);
+
   if (fs.existsSync(targetDir)) {
     spinner.fail("Directory already exists!");
     process.exit(1);
   }
 
-  // copy template folder
-  // const templateDir = path.resolve(__dirname, `../../templates/${framework}-ts`);
-  // const templateDir = path.resolve(__dirname, `../templates/${framework}-ts`);
-  // fs.cpSync(templateDir, targetDir, { recursive: true });
-
+  // 4️⃣ Copy template folder
   const templateDir = path.resolve(__dirname, `../../src/templates/${framework}-ts`);
   fs.cpSync(templateDir, targetDir, { recursive: true });
 
+  // 5️⃣ Add .env + .gitignore
   fs.writeFileSync(path.join(targetDir, ".env"), envFile.trim());
+  fs.writeFileSync(path.join(targetDir, ".gitignore"), gitignoreFile.trim());
 
   spinner.succeed(`Project ${projectName} created!`);
 
-  // Install dependencies
+  // 6️⃣ Install dependencies
   const installSpinner = ora("Installing dependencies...").start();
   try {
     await execa("npm", ["install"], { cwd: targetDir, stdio: "inherit" });
@@ -62,26 +115,3 @@ export async function createApp(projectName: string, framework: string) {
 
   console.log(chalk.green(`\n🚀 Done! cd ${projectName} && npm run dev\n`));
 }
-
-
-// import path from "path";
-// import fs from "fs-extra";
-// import { execa } from "execa";
-// import chalk from "chalk";
-
-// export async function createApp(name: string, framework: string) {
-//   const targetDir = path.join(process.cwd(), name);
-
-//   console.log(chalk.green(`🚀 Creating new ${framework} project: ${name}`));
-
-//   // Copy template
-//   const templateDir = path.join(__dirname, `../templates/${framework}-ts`);
-//   await fs.copy(templateDir, targetDir);
-
-//   // Install dependencies
-//   console.log(chalk.yellow("📦 Installing dependencies..."));
-//   await execa("npm", ["install"], { cwd: targetDir, stdio: "inherit" });
-
-//   console.log(chalk.green("✅ Project created successfully!"));
-//   console.log(`\nNext steps:\n  cd ${name}\n  npm run dev`);
-// }
