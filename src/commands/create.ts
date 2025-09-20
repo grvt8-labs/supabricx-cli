@@ -7,6 +7,27 @@ import chalk from "chalk";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const envFile = `
+# Environment Variables
+
+PORT=3000
+
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
+
+# JWT
+JWT_SECRET="supersecretjwt"
+
+# Google OAuth
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+GOOGLE_CALLBACK_URL="http://localhost:3000/auth/google/callback"
+
+# GitHub OAuth
+GITHUB_CLIENT_ID="your-github-client-id"
+GITHUB_CLIENT_SECRET="your-github-client-secret"
+GITHUB_CALLBACK_URL="http://localhost:3000/auth/github/callback"
+`;
 
 export async function createApp(projectName: string, framework: string) {
   const spinner = ora(`Creating ${framework} project...`).start();
@@ -25,6 +46,7 @@ export async function createApp(projectName: string, framework: string) {
   const templateDir = path.resolve(__dirname, `../../src/templates/${framework}-ts`);
   fs.cpSync(templateDir, targetDir, { recursive: true });
 
+  fs.writeFileSync(path.join(targetDir, ".env"), envFile.trim());
 
   spinner.succeed(`Project ${projectName} created!`);
 
