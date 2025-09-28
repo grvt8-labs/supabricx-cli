@@ -1,6 +1,6 @@
 {
   "name": "create-supabricx",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Supabricx backend accelerator CLI",
   "main": "index.js",
   "type": "module",
